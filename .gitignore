@@ -5,7 +5,7 @@ node_modules
 dist
 static
 .module-cache
-/.next
+.next
 tsbuild
 *.log*
 _nogit

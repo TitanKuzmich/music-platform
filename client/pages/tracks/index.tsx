@@ -17,7 +17,7 @@ const Index = () => {
             text: "Ты помнишь, как мы слайдили, мы снайперы и таперы, мы не были богатыми, картье для моей матери, мы сказочно богаты ща",
             listens: 10,
             audio: "http://127.0.0.1:5000/audio/16d57682-8e32-4941-8914-2895afaaa3a4.mp3",
-            picture: "http://127.0.0.1:5000/images/ff4f4b10-dcee-449f-9eca-16d7964fdc45.jpg",
+            picture: "http://127.0.0.1:5000/image/ff4f4b10-dcee-449f-9eca-16d7964fdc45.jpg",
             comments: []
         },
         {
@@ -27,7 +27,7 @@ const Index = () => {
             text: "Ты помнишь, как мы слайдили, мы снайперы и таперы, мы не были богатыми, картье для моей матери, мы сказочно богаты ща",
             listens: 10,
             audio: "http://127.0.0.1:5000/audio/16d57682-8e32-4941-8914-2895afaaa3a4.mp3",
-            picture: "http://127.0.0.1:5000/images/ff4f4b10-dcee-449f-9eca-16d7964fdc45.jpg",
+            picture: "http://127.0.0.1:5000/image/ff4f4b10-dcee-449f-9eca-16d7964fdc45.jpg",
             comments: []
         },
         {
@@ -37,7 +37,7 @@ const Index = () => {
             text: "Ты помнишь, как мы слайдили, мы снайперы и таперы, мы не были богатыми, картье для моей матери, мы сказочно богаты ща",
             listens: 10,
             audio: "http://127.0.0.1:5000/audio/16d57682-8e32-4941-8914-2895afaaa3a4.mp3",
-            picture: "http://127.0.0.1:5000/images/ff4f4b10-dcee-449f-9eca-16d7964fdc45.jpg",
+            picture: "http://127.0.0.1:5000/image/ff4f4b10-dcee-449f-9eca-16d7964fdc45.jpg",
             comments: []
         }
     ]
