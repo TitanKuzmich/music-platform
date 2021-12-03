@@ -1,7 +1,7 @@
 import {Dispatch} from "redux"
 import axios from "axios"
 
-import {TrackAction, TrackActionTypes} from "../../types/track"
+import {ITrack, TrackAction, TrackActionTypes} from "../../types/track"
 import {useTypedSelector} from "../../hooks/useTypedSelector"
 
 export const fetchTracks = () => {
@@ -15,11 +15,9 @@ export const fetchTracks = () => {
     }
 }
 
-export const deleteTrack = (id: string) => {
+export const deleteTrack = (id: string, tracks: ITrack[]) => {
     return async (dispatch: Dispatch<TrackAction>) => {
         try {
-            const {tracks} = useTypedSelector(state => state.track)
-            console.log(tracks)
             const response = await axios.delete('http://localhost:5000/tracks/' + id)
             const filteredTracks = tracks.filter(track => track._id !== response.data)
             dispatch({type: TrackActionTypes.DELETE_TRACK, payload: filteredTracks})

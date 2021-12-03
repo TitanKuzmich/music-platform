@@ -12,10 +12,11 @@ import styles from '../styles/TrackItem.module.scss'
 
 interface TrackItemProps {
     track: ITrack
+    tracks: ITrack[]
     active?: boolean
 }
 
-const TrackItem: React.FC<TrackItemProps> = ({track, active = false}) => {
+const TrackItem: React.FC<TrackItemProps> = ({track, tracks, active = false}) => {
     const router = useRouter()
     const dispatch = useDispatch()
     const {playTrack, pauseTrack, setActiveTrack} = useActions()
@@ -30,7 +31,7 @@ const TrackItem: React.FC<TrackItemProps> = ({track, active = false}) => {
     const deleteTrackRequest = async (e) => {
         e.stopPropagation()
 
-        await dispatch(await deleteTrack(track._id))
+        await dispatch(await deleteTrack(track._id, tracks))
     }
 
     return (

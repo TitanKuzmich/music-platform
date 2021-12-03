@@ -17,6 +17,7 @@ const TrackList: React.FC<TrackListProps> = ({ tracks}) => {
                     <TrackItem
                         key={track._id}
                         track={track}
+                        tracks={tracks}
                     />
                 )}
             </Box>
