@@ -1,6 +1,13 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {useRouter} from "next/router"
-import {Box, Button, Card, Grid} from "@material-ui/core"
+import {createWrapper} from "next-redux-wrapper"
+import {Box, Button, Card, Grid, TextField} from "@material-ui/core"
+import {useDispatch} from "react-redux"
+
+import {fetchTracks, searchTracks} from "../../store/action-creators/track"
+import {NextThunkDispatch, wrapper} from "../../store"
+import {useTypedSelector} from "../../hooks/useTypedSelector"
+import {useActions} from "../../hooks/useAction"
 
 import MainLayout from "../../layouts/MainLayout"
 import TrackList from "../../components/TrackList"
@@ -9,41 +16,33 @@ import {ITrack} from "../../types/track"
 
 const Index = () => {
     const router = useRouter()
-    const tracks: ITrack[] = [
-        {
-            _id: '61a783e6c0ab1e2fa5862bb3',
-            name: "Million",
-            artist: "Kizaru",
-            text: "Ты помнишь, как мы слайдили, мы снайперы и таперы, мы не были богатыми, картье для моей матери, мы сказочно богаты ща",
-            listens: 10,
-            audio: "http://127.0.0.1:5000/audio/16d57682-8e32-4941-8914-2895afaaa3a4.mp3",
-            picture: "http://127.0.0.1:5000/image/ff4f4b10-dcee-449f-9eca-16d7964fdc45.jpg",
-            comments: []
-        },
-        {
-            _id: '61a783e6c0ab1e2fa5862bb3',
-            name: "Million",
-            artist: "Kizaru",
-            text: "Ты помнишь, как мы слайдили, мы снайперы и таперы, мы не были богатыми, картье для моей матери, мы сказочно богаты ща",
-            listens: 10,
-            audio: "http://127.0.0.1:5000/audio/16d57682-8e32-4941-8914-2895afaaa3a4.mp3",
-            picture: "http://127.0.0.1:5000/image/ff4f4b10-dcee-449f-9eca-16d7964fdc45.jpg",
-            comments: []
-        },
-        {
-            _id: '61a783e6c0ab1e2fa5862bb3',
-            name: "Million",
-            artist: "Kizaru",
-            text: "Ты помнишь, как мы слайдили, мы снайперы и таперы, мы не были богатыми, картье для моей матери, мы сказочно богаты ща",
-            listens: 10,
-            audio: "http://127.0.0.1:5000/audio/16d57682-8e32-4941-8914-2895afaaa3a4.mp3",
-            picture: "http://127.0.0.1:5000/image/ff4f4b10-dcee-449f-9eca-16d7964fdc45.jpg",
-            comments: []
+    const {tracks, error} = useTypedSelector(state => state.track)
+    const [query, setQuery] = useState<string>("")
+    const dispatch = useDispatch() as NextThunkDispatch
+    const [timer, setTimer] = useState(null)
+
+    const search = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        setQuery(e.target.value)
+        if (timer) {
+            clearTimeout(timer)
         }
-    ]
+        setTimer(
+            setTimeout(async () => {
+                await dispatch(await searchTracks(e.target.value))
+            }, 500)
+        )
+    }
+
+    if (error) {
+        return (
+            <MainLayout>
+                <h1>{error}</h1>
+            </MainLayout>
+        )
+    }
 
     return (
-        <MainLayout>
+        <MainLayout title="Список треков">
             <Grid container justifyContent='center'>
                 <Card style={{width: 900}}>
                     <Box p={3}>
@@ -52,6 +51,11 @@ const Index = () => {
                             <Button onClick={() => router.push('/tracks/create')}>Загрузить</Button>
                         </Grid>
                     </Box>
+                    <TextField
+                        fullWidth
+                        value={query}
+                        onChange={search}
+                    />
                     <TrackList tracks={tracks}/>
                 </Card>
             </Grid>
@@ -60,3 +64,8 @@ const Index = () => {
 };
 
 export default Index
+
+export const getServerSideProps = wrapper.getServerSideProps(async ({store}) => {
+    const dispatch = store.dispatch as NextThunkDispatch
+    await dispatch(await fetchTracks())
+})

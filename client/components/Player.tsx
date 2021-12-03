@@ -1,42 +1,83 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Pause, PlayArrow, VolumeUp} from "@material-ui/icons"
 import {Grid, IconButton} from "@material-ui/core"
 
 import TrackProgress from "./TrackProgress"
+import {useTypedSelector} from "../hooks/useTypedSelector"
+import {useActions} from "../hooks/useAction"
 
 import styles from "../styles/Player.module.scss"
 
 import {ITrack} from "../types/track"
 
+let audio
+
 const Player = () => {
-    const track: ITrack = {
-        _id: '61a783e6c0ab1e2fa5862bb3',
-        name: "Million",
-        artist: "Kizaru",
-        text: "Ты помнишь, как мы слайдили, мы снайперы и таперы, мы не были богатыми, картье для моей матери, мы сказочно богаты ща",
-        listens: 10,
-        audio: "http://127.0.0.1:5000/audio/16d57682-8e32-4941-8914-2895afaaa3a4.mp3",
-        picture: "http://127.0.0.1:5000/image/ff4f4b10-dcee-449f-9eca-16d7964fdc45.jpg",
-        comments: []
+    const { active, currentTime, duration, pause, volume } = useTypedSelector(state => state.player)
+    const { playTrack, pauseTrack, setCurrentTime, setVolume, setDuration, setActiveTrack } = useActions()
+
+    const play = () => {
+        if (pause) {
+            playTrack()
+            audio.play()
+        } else {
+            pauseTrack()
+            audio.pause()
+        }
     }
-    const active = false
+
+    const changeVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
+        audio.volume = Number(e.target.value) / 100
+        setVolume(Number(e.target.value))
+    }
+
+    const changeCurrentTime = (e: React.ChangeEvent<HTMLInputElement>) => {
+        audio.currentTime = Number(e.target.value)
+        setCurrentTime(Number(e.target.value))
+    }
+
+    const setAudioParams = () => {
+        if (active) {
+            audio.src = "http://localhost:5000/" + active.audio
+            audio.volume = volume / 100
+            audio.onloadedmetadata = () => {
+                setDuration(Math.ceil(audio.duration))
+            }
+            audio.ontimeupdate = () => {
+                setCurrentTime(Math.ceil(audio.currentTime))
+            }
+        }
+    }
+
+    useEffect(() => {
+        if (!audio) {
+            audio = new Audio()
+        } else {
+            setAudioParams()
+            play()
+        }
+    }, [active])
+
+    if (!active) {
+        return null
+    }
 
     return (
         <div className={styles.player}>
-            <IconButton onClick={(e) => e.stopPropagation()}>
+            <IconButton onClick={play}>
                 {
-                    active
-                        ? <Pause/>
-                        : <PlayArrow/>
+                    pause
+                    ? <PlayArrow/>
+                    : <Pause/>
                 }
             </IconButton>
             <Grid container direction="column" style={{width: 200, margin: '0 20px'}}>
-                <div>{track.name}</div>
-                <div style={{fontSize: 12, color: 'gray'}}>{track.artist}</div>
+                <div>{active?.name}</div>
+                <div style={{fontSize: 12, color: 'gray'}}>{active?.artist}</div>
             </Grid>
-            <TrackProgress left={0} right={100} onChange={() => {}}/>
+            <TrackProgress left={currentTime} right={duration} onChange={changeCurrentTime}/>
             <VolumeUp style={{marginLeft: 'auto'}}/>
-            <TrackProgress left={0} right={100} onChange={() => {}}/>
+            <TrackProgress left={volume} right={100} onChange={changeVolume}/>
         </div>
     );
 };
